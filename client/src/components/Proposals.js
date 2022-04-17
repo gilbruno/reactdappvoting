@@ -2,7 +2,9 @@ import React from 'react'
 
 function Proposals() {
   return (
-    <div>Proposals</div>
+    <div className="container">
+      Proposals
+    </div>
   )
 }
 
