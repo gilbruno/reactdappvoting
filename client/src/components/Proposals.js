@@ -46,6 +46,8 @@ function Proposals(props) {
     setAddProposal(event.target.value)
   }
 
+  const myProposalsList = (myProposals.length != 0) ? <ul className="list-group">{myProposals}</ul>: ''
+
   return (
     <div className="container">
       {warningMsg}
@@ -65,9 +67,24 @@ function Proposals(props) {
         <br/>
         <br/>
         <br/>
-        <ul className="list-group">
-            {myProposals}
-        </ul>
+        
+        {myProposalsList}
+      </form>
+
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+
+      <form>
+        <h2>Read Proposal (only voters)</h2>
+        <div className="mb-3 form-group">
+          <label for="getProposalInput" class="form-label">Voter address</label>
+          <input type="text" class="form-control" id="proposalAddressInput" aria-describedby="getProposalAddressHelp"/>
+          <div id="getProposalAddressHelp" class="form-text">Read infos about a proposal address by giving an existing ID proposal</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Read Proposal</button>
+
       </form>
     </div>
   )

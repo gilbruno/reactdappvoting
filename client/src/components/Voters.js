@@ -8,7 +8,7 @@ const Voters = (props) => {
   console.log('Page des Voters ')
 
   const [addVoter, setAddVoter] = useState('')
-  const [voters, setVoters] = useState([{id: '', address:''}])
+  const [voters, setVoters] = useState([])
   const [warning, setWarning] = useState(false)
 
   const myVoters = voters.map(voter => {
@@ -47,6 +47,9 @@ const Voters = (props) => {
     setAddVoter(event.target.value)
   }
 
+  const myVotersList = (myVoters.length != 0) ? <ul className="list-group">{myVoters}</ul>: ''
+
+  console.log(myVoters.length)
   console.log(connectedAccount)
   return (
     
@@ -67,9 +70,8 @@ const Voters = (props) => {
         <br/>
         <br/>
         <br/>
-        <ul className="list-group">
-            {myVoters}
-        </ul>
+        {myVotersList}
+        
       </form>
         <br/>
         <br/>
