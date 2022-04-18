@@ -16,15 +16,29 @@ function Home() {
 
   let web3;
   const handleConnect = async () => {
-    console.log('****** Connnectoo !!')
+    console.log('****** Connnection : ' + connectedAccount)
     if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
       try {
         await window.ethereum.request({method: "eth_requestAccounts"})
         web3 = new Web3(window.ethereum)
+        window.ethereum.enable();
         console.log('Connected')
         let accounts = await web3.eth.getAccounts();
         let connectedAccount = accounts[0];
         setConnectedAccount(connectedAccount);
+
+        // detect Metamask account change
+        window.ethereum.on('accountsChanged', function (accounts) {
+          console.log('accountsChanges',accounts);
+          connectedAccount = accounts[0];
+          setConnectedAccount(connectedAccount);
+        });
+
+        // detect Network account change
+        window.ethereum.on('networkChanged', function(networkId){
+          console.log('networkChanged',networkId);
+        });
+
       }
       catch(err) {
         setError(err.message)
@@ -43,7 +57,7 @@ function Home() {
 
   }
 
-  const connection = (connectedAccount==='')
+  const connection = (connectedAccount === '' || connectedAccount === undefined)
     ?<li className='navbar-right me-2 connect'><button className='btn btn-primary connect' onClick={handleConnect}>Connect</button></li>
     :<li className="nav-item connected-account"><a href="" id="connectedAccountLink" onClick={disconnect}>Connected Account : {connectedAccount}</a></li>
 
