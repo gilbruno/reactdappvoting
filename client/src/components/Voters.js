@@ -10,10 +10,11 @@ const Voters = (props) => {
   console.log('Page des Voters ')
 
   const [addVoter, setAddVoter] = useState('')
-  const [voters, setVoters] = useState([])
-  const [warning, setWarning] = useState(false)
-  const [isOwner, setIsOwner] = useState(true)
-  const [isVoter, setIsVoter] = useState(false)
+  const [voters, setVoters]                 = useState([])
+  const [warning, setWarning]               = useState(false)
+  const [isOwner, setIsOwner]               = useState(true)
+  const [isVoter, setIsVoter]               = useState(false)
+  const [workflowStatus, setWorkflowStatus] = useState(0)
 
   useEffect(() => {
     (async function() {
@@ -21,6 +22,7 @@ const Voters = (props) => {
         let workflowstatus = await contract.methods.workflowStatus().call();
         console.log("workflowstatus")
         console.log(workflowstatus)
+        setWorkflowStatus(1)
       }
     })()
   }, [contract])
@@ -38,13 +40,7 @@ const Voters = (props) => {
     return isVoter
   }
 
-  const getWorkflowStatus = async () => {
-    let workflowstatus = await contract.methods.workflowStatus().call();
-    console.log('workflowstatus')
-    console.log(workflowstatus)
-  }
-
-
+  
   const myVoters = voters.map(voter => {
     return (
         <li className="list-group-item" key={voter.id}>{voter.address}</li>
@@ -54,6 +50,8 @@ const Voters = (props) => {
 
   const warningMsg = warning && <div class="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Voter </div>
 
+  const workflowStatusNok = (workflowStatus != 0) ? <div class="alert alert-danger mt-4" role="alert"> Impossible d'ajouter un votant à cause du statut de workflow </div> : ''
+  
   const addNewVoter = (newVoter) => {
     console.log()
     if (newVoter !== "") {
@@ -81,6 +79,11 @@ const Voters = (props) => {
     setAddVoter(event.target.value)
   }
 
+  const addVoterInput = (workflowStatus != 0) ? <input type="text" class="form-control" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter} disabled/> 
+    : <input type="text" class="form-control" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter}/>
+
+  const addVoterButton = (workflowStatus != 0) ? <button type="submit" class="btn btn-primary" disabled>Add Voter</button> : <button type="submit" class="btn btn-primary">Add Voter</button>
+
   const myVotersList = (myVoters.length != 0) ? <ul className="list-group">{myVoters}</ul>: ''
 
   const displayAddVoterForm = (isOwner)? 
@@ -88,10 +91,10 @@ const Voters = (props) => {
       <h2>Add Voter (only admin)</h2>
       <div className="mb-3 form-group">
         <label for="addVoterAddressInput" class="form-label">Voter address</label>
-        <input type="text" class="form-control" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter}/>
+        {addVoterInput}
         <div id="addVoterAddressHelp" class="form-text">Add a voter by giving a new ETH address</div>
       </div>
-      <button type="submit" class="btn btn-primary">Add Voter</button>
+      {addVoterButton}
       <br/>
       <br/>
       <br/>
@@ -116,6 +119,7 @@ const Voters = (props) => {
   return (
     <div className="container">
       {warningMsg}
+      {workflowStatusNok}
       <h1>Voters</h1>
       <br/>
       <br/>
