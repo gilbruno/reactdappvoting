@@ -41,6 +41,7 @@ class App extends Component {
   runExample = async () => {
     const { accounts, contract } = this.state;
 
+    /*
     // Stores a given value, 5 by default.
     await contract.methods.set(5).send({ from: accounts[0] });
 
@@ -49,6 +50,7 @@ class App extends Component {
 
     // Update state with the result.
     this.setState({ storageValue: response });
+    */
   };
 
   render() {
