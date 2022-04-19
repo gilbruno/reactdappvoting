@@ -7,12 +7,13 @@ import HomeContent from './Homecontent'
 import Web3 from "web3";
 import {Link, NavLink} from 'react-router-dom';
 import Toast from 'react-bootstrap/Toast';
-
+import VotingContract from "../contracts/Voting.json";
 
 function Home() {
 
   const [error, setError] = useState('');
   const [connectedAccount, setConnectedAccount] = useState('');
+  const [state, setState] = useState({web3:null, accounts:null, contract:null})
 
   let web3;
   const handleConnect = async () => {
@@ -23,15 +24,31 @@ function Home() {
         web3 = new Web3(window.ethereum)
         window.ethereum.enable();
         console.log('Connected')
+        //Get the list of accounts
         let accounts = await web3.eth.getAccounts();
         let connectedAccount = accounts[0];
-        setConnectedAccount(connectedAccount);
+        
+
+        //Get the contract instance
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = VotingContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          VotingContract.abi,
+          deployedNetwork && deployedNetwork.address,
+        );
+
+        //Set the state
+        setState({web3: web3, accounts: accounts, contract:instance})
+        setConnectedAccount(connectedAccount);  
+
 
         // detect Metamask account change
         window.ethereum.on('accountsChanged', function (accounts) {
           console.log('accountsChanges',accounts);
           connectedAccount = accounts[0];
+          //Set the state
           setConnectedAccount(connectedAccount);
+          setState({web3: web3, accounts: accounts, contract:instance})
         });
 
         // detect Network account change
