@@ -1,10 +1,12 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import getWeb3 from "../getWeb3";
 
 const Voters = (props) => {
-
-  const {connectedAccount} = props;  
-
+  const {connectedAccount, stateProps} = props;  
+  const web3 = stateProps.web3
+  const contract = stateProps.contract
+  const accounts = stateProps.accounts
   console.log('Page des Voters ')
 
   const [addVoter, setAddVoter] = useState('')
@@ -13,6 +15,16 @@ const Voters = (props) => {
   const [isOwner, setIsOwner] = useState(true)
   const [isVoter, setIsVoter] = useState(false)
 
+  useEffect(() => {
+    (async function() {
+      if (contract !== null) {
+        let workflowstatus = await contract.methods.workflowStatus().call();
+        console.log("workflowstatus")
+        console.log(workflowstatus)
+      }
+    })()
+  }, [contract])
+
   const isOwnerFunc = () => {
     if (connectedAccount == '0xdfg5454xdg654dgF') {
       return true
@@ -20,13 +32,19 @@ const Voters = (props) => {
     else {
       return false
     }
-  
   }
 
   const isVoterFunc = () => {
     return isVoter
   }
- 
+
+  const getWorkflowStatus = async () => {
+    let workflowstatus = await contract.methods.workflowStatus().call();
+    console.log('workflowstatus')
+    console.log(workflowstatus)
+  }
+
+
   const myVoters = voters.map(voter => {
     return (
         <li className="list-group-item" key={voter.id}>{voter.address}</li>

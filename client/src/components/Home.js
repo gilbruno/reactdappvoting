@@ -112,7 +112,7 @@ function Home() {
         <Routes>
             <Route path="/dashboard" element={<Dashboard/>}/>  
             <Route path="/" element={<HomeContent/>}/>  
-            <Route path="/voters" element={<Voters connectedAccount={connectedAccount}/>}/>  
+            <Route path="/voters" element={<Voters connectedAccount={connectedAccount} stateProps={state}/>}/>  
             <Route path="/proposals" element={<Proposals connectedAccount={connectedAccount}/>}/>  
         </Routes>
     </BrowserRouter>
