@@ -35,19 +35,25 @@ const Voters = (props) => {
     })()
   }, [contract])
 
+  //useEffect on "accounts" state value change
   useEffect(() => {
     (async function() {
       console.log('2')
       if (contract !== null) {
         let owner          = await contract.methods.owner().call();
+        //Set isOwner
         if (connectedAccount.toLowerCase() === owner.toLowerCase()) {
           setIsOwner(true)
         }
         else {
           setIsOwner(false)
         }
+        //Set isVoter
+        let voter = await contract.methods.getVoter(connectedAccount).call()
+        let isVoterBool = (voter.isRegistered) ? true : false
+        setIsVoter(isVoterBool)
+        console.log('isVoterBool : ' + isVoterBool)
       }  
-    
     })()
   }, [accounts])
 

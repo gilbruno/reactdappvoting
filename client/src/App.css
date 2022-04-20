@@ -62,8 +62,15 @@ div.container > h1 {
 li.connected-account{
   margin-top: 6px;
   margin-left: 50px;
-
 }
+
+.card-text {
+  color: black;
+  font-size: 30px;
+  text-align: center;
+  font-family: "Century Gothic";
+}
+
 
 .section_our_solution .row {
   align-items: center;

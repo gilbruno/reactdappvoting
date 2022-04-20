@@ -81,7 +81,7 @@ function Home() {
 
   const disconnect = (event) => {
     event.preventDefault()
-    web3.etethereumh.currentProvider.disconnect();
+    //web3.etethereumh.currentProvider.disconnect();
 
   }
 
@@ -96,6 +96,9 @@ function Home() {
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav ml-auto">
               <li className="nav-item">
+                  <NavLink className="nav-link" to="/">Home</NavLink>
+              </li>
+              <li className="nav-item">
                   <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
               </li>
               <li className="nav-item">
@@ -103,9 +106,6 @@ function Home() {
               </li>
               <li className="nav-item">
                   <NavLink className="nav-link" to="/proposals">Proposals</NavLink>
-              </li>
-              <li className="nav-item">
-                  <NavLink className="nav-link" to="/results">Results</NavLink>
               </li>
               {connection}
           </ul>

@@ -30,6 +30,28 @@ function Dashboard(props) {
     })()
   }, [contract])
 
+  //useEffect on "accounts" state value change
+  useEffect(() => {
+    (async function() {
+      console.log('2')
+      if (contract !== null) {
+        let owner          = await contract.methods.owner().call();
+        //Set isOwner
+        if (connectedAccount.toLowerCase() === owner.toLowerCase()) {
+          setIsOwner(true)
+        }
+        else {
+          setIsOwner(false)
+        }
+        //Set isVoter
+        let voter = await contract.methods.getVoter(connectedAccount).call()
+        let isVoterBool = (voter.isRegistered) ? true : false
+        setIsVoter(isVoterBool)
+        console.log('isVoterBool : ' + isVoterBool)
+      }  
+    })()
+  }, [accounts])
+  
   const getWorkflowStatusName = (workflow) => {
     let wfStatusName
     switch (workflow) {
@@ -113,7 +135,7 @@ function Dashboard(props) {
       </div>
       <br/>
       <br/>
-      <div className="divider mt-5"><span></span><span>Voters Count</span><span></span></div>
+      <div className="divider mt-5"><span></span><span>Events History</span><span></span></div>
       <br/>
       <br/>
       <div className="divider mt-5"><span></span><span>Results</span><span></span></div>
