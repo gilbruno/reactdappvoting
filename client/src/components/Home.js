@@ -46,9 +46,11 @@ function Home() {
         window.ethereum.on('accountsChanged', function (accounts) {
           console.log('accountsChanges',accounts);
           connectedAccount = accounts[0];
+          //window.location.reload
           //Set the state
           setConnectedAccount(connectedAccount);
           setState({web3: web3, accounts: accounts, contract:instance})
+          
         });
 
         // detect Network account change
@@ -110,10 +112,10 @@ function Home() {
     </div>
     </nav>
         <Routes>
-            <Route path="/dashboard" element={<Dashboard/>}/>  
+            <Route path="/dashboard" element={<Dashboard connectedAccount={connectedAccount} stateProps={state}/>}/>  
             <Route path="/" element={<HomeContent/>}/>  
             <Route path="/voters" element={<Voters connectedAccount={connectedAccount} stateProps={state}/>}/>  
-            <Route path="/proposals" element={<Proposals connectedAccount={connectedAccount}/>}/>  
+            <Route path="/proposals" element={<Proposals connectedAccount={connectedAccount} stateProps={state}/>}/>  
         </Routes>
     </BrowserRouter>
   )  

@@ -48,9 +48,9 @@ const Voters = (props) => {
     }
   )
 
-  const warningMsg = warning && <div class="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Voter </div>
+  const warningMsg = warning && <div className="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Voter </div>
 
-  const workflowStatusNok = (workflowStatus != 0) ? <div class="alert alert-danger mt-4" role="alert"> Impossible d'ajouter un votant à cause du statut de workflow </div> : ''
+  const workflowStatusNok = (workflowStatus != 0) ? <div className="alert alert-danger mt-4" role="alert"> Impossible d'ajouter un votant à cause du statut de workflow </div> : ''
   
   const addNewVoter = (newVoter) => {
     console.log()
@@ -65,7 +65,6 @@ const Voters = (props) => {
     }  
     else {
         setWarning(true);
-
     }    
   }
 
@@ -79,10 +78,10 @@ const Voters = (props) => {
     setAddVoter(event.target.value)
   }
 
-  const addVoterInput = (workflowStatus != 0) ? <input type="text" class="form-control" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter} disabled/> 
-    : <input type="text" class="form-control" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter}/>
+  const addVoterInput = (workflowStatus != 0) ? <input type="text" className="form-control w-50" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter} disabled/> 
+    : <input type="text" className="form-control" id="addVoterAddressInput" aria-describedby="addVoterAddressHelp" value={addVoter} onChange={handleOnChangeAddVoter}/>
 
-  const addVoterButton = (workflowStatus != 0) ? <button type="submit" class="btn btn-primary" disabled>Add Voter</button> : <button type="submit" class="btn btn-primary">Add Voter</button>
+  const addVoterButton = (workflowStatus != 0) ? <button type="submit" className="btn btn-primary" disabled>Add Voter</button> : <button type="submit" className="btn btn-primary">Add Voter</button>
 
   const myVotersList = (myVoters.length != 0) ? <ul className="list-group">{myVoters}</ul>: ''
 
@@ -90,9 +89,9 @@ const Voters = (props) => {
     <form onSubmit={handleSubmitAddVoter}>
       <h2>Add Voter (only admin)</h2>
       <div className="mb-3 form-group">
-        <label for="addVoterAddressInput" class="form-label">Voter address</label>
+        <label for="addVoterAddressInput" className="form-label">Voter address</label>
         {addVoterInput}
-        <div id="addVoterAddressHelp" class="form-text">Add a voter by giving a new ETH address</div>
+        <div id="addVoterAddressHelp" className="form-text">Add a voter by giving a new ETH address</div>
       </div>
       {addVoterButton}
       <br/>
@@ -100,19 +99,19 @@ const Voters = (props) => {
       <br/>
       {myVotersList}  
     </form>
-    : <div class="card"><div class="card-body text-danger bg-dark">You cannot add voters in the white list as you're not the owner.</div></div>
+    : <div className="card"><div className="card-body text-danger bg-dark">You cannot add voters in the white list as you're not the owner.</div></div>
 
   const displayReadVoterForm = (isVoter) ?
     <form>
     <h2>Read Voter (only voters)</h2>
     <div className="mb-3 form-group">
-      <label for="getVoterAddressInput" class="form-label">Voter address</label>
-      <input type="text" class="form-control" id="voterAddressInput" aria-describedby="getVoterAddressHelp"/>
-      <div id="getVoterAddressHelp" class="form-text">Read infos about a voter address by giving an existing ETH voter address</div>
+      <label for="getVoterAddressInput" className="form-label">Voter address</label>
+      <input type="text" className="form-control" id="voterAddressInput" aria-describedby="getVoterAddressHelp"/>
+      <div id="getVoterAddressHelp" className="form-text">Read infos about a voter address by giving an existing ETH voter address</div>
     </div>
-    <button type="submit" class="btn btn-primary">Read Voter</button>
+    <button type="submit" className="btn btn-primary">Read Voter</button>
     </form> 
-    : <div class="card"><div class="card-body text-danger bg-dark">You cannot get infos of voters as you're not registered in the white list.</div></div>
+    : <div className="card"><div className="card-body text-danger bg-dark">You cannot get infos of voters as you're not registered in the white list.</div></div>
 
   console.log(myVoters.length)
   console.log(connectedAccount)
