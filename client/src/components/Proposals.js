@@ -8,7 +8,7 @@ function Proposals(props) {
   const web3 = stateProps.web3
   const contract = stateProps.contract
   const accounts = stateProps.accounts
-  console.log('Page des Proposals')
+  //console.log('Page des Proposals')
 
   const [addProposal, setAddProposal] = useState('')
   const [proposals, setProposals] = useState([{id: '', name:''}])
@@ -21,14 +21,15 @@ function Proposals(props) {
     (async function() {
       if (contract !== null) {
         let workflowstatus = await contract.methods.workflowStatus().call();
-        console.log("workflowstatus")
-        console.log(workflowstatus)
+        let owner          = await contract.methods.owner().call();
+        if (connectedAccount.toLowerCase() === owner.toLowerCase()) {
+          setIsOwner(true)
+        }
+        else {
+          setIsOwner(false)
+        }
         setWorkflowStatus(workflowstatus)
-
-        //TEST
-        setIsOwner(false)
         setIsVoter(false)
-
       }
     })()
   }, [contract])

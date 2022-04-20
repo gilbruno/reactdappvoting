@@ -9,19 +9,21 @@ function Dashboard(props) {
   console.log('Page du dashboard')
 
   const [workflowStatus, setWorkflowStatus] = useState(0)
-  const [isOwner, setIsOwner]               = useState(true)
+  const [isOwner, setIsOwner]               = useState(false)
   const [isVoter, setIsVoter]               = useState(false)
 
   useEffect(() => {
     (async function() {
       if (contract !== null) {
         let workflowstatus = await contract.methods.workflowStatus().call();
-        console.log("workflowstatus")
-        console.log(workflowstatus)
+        let owner          = await contract.methods.owner().call();
+        if (connectedAccount.toLowerCase() === owner.toLowerCase()) {
+          setIsOwner(true)
+        }
+        else {
+          setIsOwner(false)
+        }
         setWorkflowStatus(workflowstatus)
-
-        //TEST
-        setIsOwner(false)
         setIsVoter(false)
 
       }
@@ -55,21 +57,22 @@ function Dashboard(props) {
   }
 
   const getWorkflowStatusButtonName = (workflow) => {
+    console.log('workflow = ' + workflow)
     let wfStatusButtonName
     switch (workflow) {
-      case 0:
+      case '0':
         wfStatusButtonName = 'Start Proposals Registration'
         break
-      case 1:
+      case '1':
         wfStatusButtonName = 'Start Proposals Registration'
         break
-      case 2:
+      case '2':
         wfStatusButtonName = 'Start Voting Session'
         break
-      case 3:
+      case '3':
         wfStatusButtonName = 'End Voting Session'
         break  
-      case 4:
+      case '4':
         wfStatusButtonName = 'Tally Votes'
         break   
     }  
@@ -82,9 +85,13 @@ function Dashboard(props) {
     
   }
 
+
   const workflowStatusName       = getWorkflowStatusName(workflowStatus)
   const workflowStatusButtonName = getWorkflowStatusButtonName(workflowStatus)
   const warningIsNotOwner = !isOwner && <div className="alert alert-danger mt-4 w-50" role="alert">You can't modify the workflow Status because you are not the owner</div>
+  
+  console.log(isOwner)
+
   const buttonModifyStatus = (isOwner) 
     ? <button type="" className="btn btn-primary" onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
     : ''

@@ -7,7 +7,7 @@ const Voters = (props) => {
   const web3 = stateProps.web3
   const contract = stateProps.contract
   const accounts = stateProps.accounts
-  console.log('Page des Voters ')
+  //console.log('Page des Voters ')
 
   const [addVoter, setAddVoter] = useState('')
   const [voters, setVoters]                 = useState([])
@@ -18,29 +18,39 @@ const Voters = (props) => {
 
   useEffect(() => {
     (async function() {
+      console.log('1')
       if (contract !== null) {
         let workflowstatus = await contract.methods.workflowStatus().call();
-        console.log("workflowstatus")
-        console.log(workflowstatus)
-        setWorkflowStatus(1)
+        let owner          = await contract.methods.owner().call();
+        if (connectedAccount.toLowerCase() === owner.toLowerCase()) {
+          setIsOwner(true)
+        }
+        else {
+          setIsOwner(false)
+        }
+        setWorkflowStatus(workflowstatus)
+        setIsVoter(false)
+
       }
     })()
   }, [contract])
 
-  const isOwnerFunc = () => {
-    if (connectedAccount == '0xdfg5454xdg654dgF') {
-      return true
-    }
-    else {
-      return false
-    }
-  }
+  useEffect(() => {
+    (async function() {
+      console.log('2')
+      if (contract !== null) {
+        let owner          = await contract.methods.owner().call();
+        if (connectedAccount.toLowerCase() === owner.toLowerCase()) {
+          setIsOwner(true)
+        }
+        else {
+          setIsOwner(false)
+        }
+      }  
+    
+    })()
+  }, [accounts])
 
-  const isVoterFunc = () => {
-    return isVoter
-  }
-
-  
   const myVoters = voters.map(voter => {
     return (
         <li className="list-group-item" key={voter.id}>{voter.address}</li>
@@ -50,17 +60,21 @@ const Voters = (props) => {
 
   const warningMsg = warning && <div className="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Voter </div>
 
-  const workflowStatusNok = (workflowStatus != 0) ? <div className="alert alert-danger mt-4" role="alert"> Impossible d'ajouter un votant à cause du statut de workflow </div> : ''
+  const workflowStatusNok = (workflowStatus != '0') ? <div className="alert alert-danger mt-4" role="alert"> Impossible d'ajouter un votant à cause du statut de workflow </div> : ''
   
-  const addNewVoter = (newVoter) => {
-    console.log()
+  const addNewVoter = async (newVoter) => {
     if (newVoter !== "") {
         setVoters([...voters, {
             id: uuidv4(),
             address:newVoter
             }
         ])
+        console.log(voters)
+        console.log('Send transaction to metamask to add new voter')
+        // await contract.methods.addVoter(newVoter).send({from: connectedAccount})
+        // let voters = await contract.methods.getVoter(newVoter).call()
         setWarning(warning ? !warning : warning);
+        setAddVoter('')
 
     }  
     else {
@@ -70,7 +84,6 @@ const Voters = (props) => {
 
   const handleSubmitAddVoter = (event) => {
     event.preventDefault()  
-    console.log('addvoter' + addVoter)
     addNewVoter(addVoter)
   }
 
@@ -87,7 +100,6 @@ const Voters = (props) => {
 
   const displayAddVoterForm = (isOwner)? 
     <form onSubmit={handleSubmitAddVoter}>
-      <h2>Add Voter (only admin)</h2>
       <div className="mb-3 form-group">
         <label for="addVoterAddressInput" className="form-label">Voter address</label>
         {addVoterInput}
@@ -113,18 +125,19 @@ const Voters = (props) => {
     </form> 
     : <div className="card"><div className="card-body text-danger bg-dark">You cannot get infos of voters as you're not registered in the white list.</div></div>
 
-  console.log(myVoters.length)
-  console.log(connectedAccount)
+  //console.log(myVoters.length)
+  //console.log(connectedAccount)
   return (
     <div className="container">
+      <div className="divider mt-5"><span></span><span>Add Voters (only admin)</span><span></span></div>
       {warningMsg}
       {workflowStatusNok}
-      <h1>Voters</h1>
       <br/>
       <br/>
       {displayAddVoterForm}        
         <br/>
         <br/>
+        <div className="divider mt-5"><span></span><span>Read Voter</span><span></span></div>  
       {displayReadVoterForm}        
     </div>
   )

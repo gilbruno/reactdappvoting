@@ -8,6 +8,7 @@ import Web3 from "web3";
 import {Link, NavLink} from 'react-router-dom';
 import Toast from 'react-bootstrap/Toast';
 import VotingContract from "../contracts/Voting.json";
+import getWeb3 from "../getWeb3";
 
 function Home() {
 
@@ -17,8 +18,15 @@ function Home() {
 
   let web3;
   const handleConnect = async () => {
+
+    
     console.log('****** Connnection : ' + connectedAccount)
     if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+      window.ethereum.on('accountsChanged', function (accounts) {
+        console.log('Changement de compte')
+        setConnectedAccount(connectedAccount);
+      })
+
       try {
         await window.ethereum.request({method: "eth_requestAccounts"})
         web3 = new Web3(window.ethereum)
@@ -68,6 +76,7 @@ function Home() {
       //Metamask not installed
       console.log('Please install Metamask');
     } 
+  
   }
 
   const disconnect = (event) => {
