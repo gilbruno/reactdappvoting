@@ -71,6 +71,9 @@ li.connected-account{
   font-family: "Century Gothic";
 }
 
+.toast-body {
+  background-color: #61DAFB
+}
 
 .section_our_solution .row {
   align-items: center;

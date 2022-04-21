@@ -37,6 +37,13 @@ function Proposals(props) {
   //useEffect on "accounts" state value change
   useEffect(() => {
     (async function() {
+      console.log('useEffect')  
+    })()
+  }, [accounts])
+
+  //useEffect on "accounts" state value change
+  useEffect(() => {
+    (async function() {
       console.log('2')
       if (contract !== null) {
         let owner          = await contract.methods.owner().call();
@@ -52,6 +59,10 @@ function Proposals(props) {
         let isVoterBool = (voter.isRegistered) ? true : false
         setIsVoter(isVoterBool)
         console.log('isVoterBool : ' + isVoterBool)
+
+        //Set Proposals
+        let proposalsFromcontract = await getPastEventsProposalsHistory()
+        setProposals(proposalsFromcontract)
       }  
     })()
   }, [accounts])
@@ -59,26 +70,60 @@ function Proposals(props) {
 
   const myProposals = proposals.map(proposal => {
     return (
-        <li className="list-group-item" key={proposal.id}>{proposal.name}</li>
+        <li className="list-group-item" key={proposal.id}>ID : {proposal.id}  | NAME : {proposal.name}</li>
     )
     }
   )
 
   const warningMsg = warning && <div className="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Proposal </div>
 
+  const getPastEventsHistory = async () => {
+    let options = {
+      fromBlock:0,
+      toBlock: 'latest'
+    }
+    let proposals = []
+    let proposalsEvents = await contract.getPastEvents('ProposalRegistered', options);
+    return proposalsEvents;
+  }
+
+  const getPastEventsProposalsHistory = async () => {
+    let options = {
+      fromBlock:0,
+      toBlock: 'latest'
+    }
+    let proposals = []
+    let proposalsEvents = await contract.getPastEvents('ProposalRegistered', options);
+    //console.log('proposalsEvents')
+    //console.log(proposalsEvents)
+    for (let i = 0; i < proposalsEvents.length; i++) {
+      let idProposal = proposalsEvents[i].returnValues.proposalId
+      let proposal = await contract.methods.getOneProposal(idProposal).call({from: connectedAccount})
+      proposals.push({id : idProposal, name: proposal.description})
+    }
+    return proposals
+  }
+
+  const getMaxIdProposal = async () => {
+    let proposals = await getPastEventsProposalsHistory()
+    return (proposals.length -1)
+  }
+
   const addNewProposal = async (newProposal) => {
     if (newProposal !== "") {
-        /*
-        setProposals([...proposals, {
-            id: uuidv4(),
-            name:newProposal
-            }
-        ])
-        */
+        
         console.log('Send transaction to metamask to add new proposal')
         await contract.methods.addProposal(newProposal).send({from: connectedAccount})
-        let proposal = await contract.methods.getOneProposal(newProposal).call({from: connectedAccount})
-        console.log(proposal)
+        
+        let maxIdProposal = await getMaxIdProposal()
+        setProposals([...proposals, {
+          id: maxIdProposal+1,
+          name:newProposal
+          }
+        ])
+        
+        console.log("proposal")
+        //console.log(proposal)
         setWarning(warning ? !warning : warning);
         setAddProposal('')
     }  
@@ -99,7 +144,9 @@ function Proposals(props) {
 
   const myProposalsList = (myProposals.length != 0) ? <ul className="list-group">{myProposals}</ul>: ''
 
-  const displayAddProposalForm = isOwner 
+  const workflowStatusNok = (workflowStatus != '1') ? <div className="alert alert-danger mt-4" role="alert">You can't add proposal anymore because workflow status is not "ProposalsRegistrationStarted"</div> : ''
+
+  const displayAddProposalForm = isVoter
     ? 
     <form onSubmit={handleSubmitAddProposal}>
       
@@ -113,7 +160,7 @@ function Proposals(props) {
       <br/>
       <br/>        
     </form>
-    : <div className="card"><div className="card-body text-danger bg-dark">You cannot add proposals as you're not the owner.</div></div>
+    : <div className="card"><div className="card-body text-danger bg-dark">You cannot add proposals as you're not a voter (registered in the white list).</div></div>
 
     const displayReadProposalForm = isVoter
     ? <form>
@@ -131,6 +178,7 @@ function Proposals(props) {
     <div className="container">
       <div className="divider mt-5"><span></span><span>Add Proposal</span><span></span></div>
       {warningMsg}
+      {workflowStatusNok}
       <br/>
       <br/>
       {displayAddProposalForm}
@@ -140,6 +188,11 @@ function Proposals(props) {
       <br/>
       <br/>
       {displayReadProposalForm}
+
+      <div className="divider mt-5"><span></span><span>List of Proposals</span><span></span></div>
+      {myProposals}
+      
+      
     </div>
   )
 }

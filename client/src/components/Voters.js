@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import getWeb3 from "../getWeb3";
+import { Toast, Button } from 'react-bootstrap'
+
 
 const Voters = (props) => {
   const {connectedAccount, stateProps} = props;  
@@ -15,6 +17,9 @@ const Voters = (props) => {
   const [isOwner, setIsOwner]               = useState(true)
   const [isVoter, setIsVoter]               = useState(false)
   const [workflowStatus, setWorkflowStatus] = useState(0)
+  const [displayVoterInformations, setDisplayVoterInformations] = useState('')
+  const [view, initView] = useState(false)
+
 
   const readVoterInput = useRef('')
 
@@ -74,7 +79,7 @@ const Voters = (props) => {
 
   const warningMsg = warning && <div className="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Voter </div>
 
-  const workflowStatusNok = (workflowStatus != '0') ? <div className="alert alert-danger mt-4" role="alert"> Impossible d'ajouter un votant à cause du statut de workflow </div> : ''
+  const workflowStatusNok = (workflowStatus != '0') ? <div className="alert alert-danger mt-4" role="alert">You can't add voter anymore because workflow status is not "REGISTERINGVOTERS"</div> : ''
   
   const addNewVoter = async (newVoter) => {
     if (newVoter !== "") {
@@ -140,9 +145,25 @@ const Voters = (props) => {
     console.log(voter)
     //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
     alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
+    displayVoterInfos = "IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId
+    setDisplayVoterInformations(displayVoterInfos)
+    
   } 
 
+  const handleClick = async (event) => {
+    initView(true)
+    event.preventDefault()
+    console.log('readVoterInput')
+    console.log(readVoterInput.current.value)
+    let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
+    console.log(voter)
+    //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
+    //alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
+    displayVoterInfos = "IS VOTER REGISTERED : " + voter.isRegistered +" ----  HAS VOTER VOTED : " + voter.hasVoted +  "----  PROPOSAL ID VOTED : " + voter.votedProposalId
 
+    setDisplayVoterInformations(displayVoterInfos)
+    
+  }  
   const displayReadVoterForm = (isVoter) ?
     <form>
     <h2>Read Voter (only voters)</h2>
@@ -151,10 +172,19 @@ const Voters = (props) => {
       <input type="text" className="form-control" id="voterAddressInput" ref={readVoterInput} aria-describedby="getVoterAddressHelp"/>
       <div id="getVoterAddressHelp" className="form-text">Read infos about a voter address by giving an existing ETH voter address</div>
     </div>
-    <button onClick={handleReadVoter} className="btn btn-primary">Read Voter</button>
+    
+    <Toast onClose={() => initView(false)} show={view} delay={5000} autohide>
+        <Toast.Header>
+        <strong className="mr-auto"></strong>
+        <small></small>
+        </Toast.Header>
+        <Toast.Body>{displayVoterInformations}</Toast.Body>
+    </Toast>
+    <Button onClick={handleClick}>Read Voter</Button>
+    
     <br/>
     <br/>
-    {displayVoterInfos}
+    
     </form> 
     
     

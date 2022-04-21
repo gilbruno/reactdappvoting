@@ -130,7 +130,7 @@ function Dashboard(props) {
       await contract.methods.tallyVotes().send({from: connectedAccount})
     }  
     let newWorkflowStatus = parseInt(workflowStatus)+1
-    setWorkflowStatus(workflowStatus+1)
+    setWorkflowStatus(newWorkflowStatus)
   }
 
 
@@ -145,6 +145,31 @@ function Dashboard(props) {
     : ''
 
   const displayResult = (workflowStatusName != 'VotesTallied')?<div className="alert alert-danger mt-4 w-50" role="alert">Results are not known yet</div>:''
+
+  const getPastEventsProposalsHistory = async () => {
+    let options = {
+      fromBlock:0,
+      toBlock: 'latest'
+    }
+    let proposals = []
+    let proposalsEvents = await contract.getPastEvents('ProposalRegistered', options);
+    //console.log('proposalsEvents')
+    //console.log(proposalsEvents)
+    for (let i = 0; i < proposalsEvents.length; i++) {
+      let idProposal = proposalsEvents[i].returnValues.proposalId
+      let proposal = await contract.methods.getOneProposal(idProposal).call({from: connectedAccount})
+      proposals.push({id : idProposal, name: proposal.description})
+    }
+    
+    console.log(proposals)
+  }
+
+  const test = getPastEventsProposalsHistory();
+  const displayEventsPrposalsHistory = <ul>
+    <li>
+
+    </li>
+  </ul>
 
   return (
     <div className="container">
@@ -161,7 +186,8 @@ function Dashboard(props) {
       </div>
       <br/>
       <br/>
-      <div className="divider mt-5"><span></span><span>Events History</span><span></span></div>
+      <div className="divider mt-5"><span></span><span>Events Proposals History</span><span></span></div>
+
       <br/>
       <br/>
       <div className="divider mt-5"><span></span><span>Results</span><span></span></div>
