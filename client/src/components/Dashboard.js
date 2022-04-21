@@ -44,10 +44,18 @@ function Dashboard(props) {
           setIsOwner(false)
         }
         //Set isVoter
-        let voter = await contract.methods.getVoter(connectedAccount).call()
-        let isVoterBool = (voter.isRegistered) ? true : false
-        setIsVoter(isVoterBool)
-        console.log('isVoterBool : ' + isVoterBool)
+        try {
+          let voter = await contract.methods.getVoter(connectedAccount).call()
+          let isVoterBool = (voter.isRegistered) ? true : false
+          setIsVoter(isVoterBool)
+          console.log('isVoterBool : ' + isVoterBool)  
+        }
+        catch (err) {
+          if (err.message.includes('not a voter')) {
+            setIsVoter(false)
+          }
+        }
+        
       }  
     })()
   }, [accounts])
@@ -55,22 +63,22 @@ function Dashboard(props) {
   const getWorkflowStatusName = (workflow) => {
     let wfStatusName
     switch (workflow) {
-      case 0:
+      case '0':
         wfStatusName = 'RegisteringVoters'
         break
-      case 1:
+      case '1':
         wfStatusName = 'ProposalsRegistrationStarted'
         break
-      case 2:
+      case '2':
         wfStatusName = 'ProposalsRegistrationEnded'
         break
-      case 3:
+      case '3':
         wfStatusName = 'VotingSessionStarted'
         break  
-      case 4:
+      case '4':
         wfStatusName = 'VotingSessionEnded'
         break   
-      case 5:
+      case '5':
         wfStatusName = 'VotesTallied'
         break         
 
@@ -86,7 +94,7 @@ function Dashboard(props) {
         wfStatusButtonName = 'Start Proposals Registration'
         break
       case '1':
-        wfStatusButtonName = 'Start Proposals Registration'
+        wfStatusButtonName = 'End Proposals Registration'
         break
       case '2':
         wfStatusButtonName = 'Start Voting Session'
@@ -102,9 +110,27 @@ function Dashboard(props) {
     return wfStatusButtonName
   }
 
-  const changeWorkflowStatus = (event) => {
+  const changeWorkflowStatus = async (event) => {
     event.preventDefault();
+    console.log(workflowStatus)
     
+    if (workflowStatus == 0) {
+      await contract.methods.startProposalsRegistering().send({from: connectedAccount})
+    }
+    else if (workflowStatus == 1) {
+      await contract.methods.endProposalsRegistering().send({from: connectedAccount})
+    }
+    else if (workflowStatus == 2) {
+      await contract.methods.startVotingSession().send({from: connectedAccount})
+    }
+    else if (workflowStatus == 3) {
+      await contract.methods.endVotingSession().send({from: connectedAccount})
+    }
+    else if (workflowStatus == 4) {
+      await contract.methods.tallyVotes().send({from: connectedAccount})
+    }  
+    let newWorkflowStatus = parseInt(workflowStatus)+1
+    setWorkflowStatus(workflowStatus+1)
   }
 
 

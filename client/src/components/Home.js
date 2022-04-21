@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Dashboard from './Dashboard'
 import Voters from './Voters'
 import Proposals from './Proposals'
+import Voting from './Voting'
 import HomeContent from './Homecontent'
 import Web3 from "web3";
 import {Link, NavLink} from 'react-router-dom';
@@ -22,8 +23,11 @@ function Home() {
     
     console.log('****** Connnection : ' + connectedAccount)
     if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+      // detect Metamask account change
       window.ethereum.on('accountsChanged', function (accounts) {
         console.log('Changement de compte')
+        let connectedAccount = accounts[0];
+        console.log('connectedAccount :' + connectedAccount)
         setConnectedAccount(connectedAccount);
       })
 
@@ -36,7 +40,6 @@ function Home() {
         let accounts = await web3.eth.getAccounts();
         let connectedAccount = accounts[0];
         
-
         //Get the contract instance
         const networkId = await web3.eth.net.getId();
         const deployedNetwork = VotingContract.networks[networkId];
@@ -50,16 +53,15 @@ function Home() {
         setConnectedAccount(connectedAccount);  
 
 
-        // detect Metamask account change
+        
         window.ethereum.on('accountsChanged', function (accounts) {
           console.log('accountsChanges',accounts);
           connectedAccount = accounts[0];
-          //window.location.reload
-          //Set the state
           setConnectedAccount(connectedAccount);
           setState({web3: web3, accounts: accounts, contract:instance})
           
         });
+        
 
         // detect Network account change
         window.ethereum.on('networkChanged', function(networkId){
@@ -107,6 +109,9 @@ function Home() {
               <li className="nav-item">
                   <NavLink className="nav-link" to="/proposals">Proposals</NavLink>
               </li>
+              <li className="nav-item">
+                  <NavLink className="nav-link" to="/voting">Voting</NavLink>
+              </li>
               {connection}
           </ul>
           <div className="toast align-items-center text-white bg-primary border-0" id="test" role="alert" aria-live="assertive" aria-atomic="true">
@@ -125,6 +130,8 @@ function Home() {
             <Route path="/" element={<HomeContent/>}/>  
             <Route path="/voters" element={<Voters connectedAccount={connectedAccount} stateProps={state}/>}/>  
             <Route path="/proposals" element={<Proposals connectedAccount={connectedAccount} stateProps={state}/>}/>  
+            <Route path="/voting" element={<Voting connectedAccount={connectedAccount} stateProps={state}/>}/>  
+
         </Routes>
     </BrowserRouter>
   )  

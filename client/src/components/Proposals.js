@@ -66,19 +66,24 @@ function Proposals(props) {
 
   const warningMsg = warning && <div className="alert alert-danger mt-4" role="alert"> Veuillez indiquer un Proposal </div>
 
-  const addNewProposal = (newProposal) => {
+  const addNewProposal = async (newProposal) => {
     if (newProposal !== "") {
+        /*
         setProposals([...proposals, {
             id: uuidv4(),
             name:newProposal
             }
         ])
+        */
+        console.log('Send transaction to metamask to add new proposal')
+        await contract.methods.addProposal(newProposal).send({from: connectedAccount})
+        let proposal = await contract.methods.getOneProposal(newProposal).call({from: connectedAccount})
+        console.log(proposal)
         setWarning(warning ? !warning : warning);
-
+        setAddProposal('')
     }  
     else {
         setWarning(true);
-        
     }    
   }
 

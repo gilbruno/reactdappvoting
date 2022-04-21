@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import getWeb3 from "../getWeb3";
 
@@ -15,6 +15,8 @@ const Voters = (props) => {
   const [isOwner, setIsOwner]               = useState(true)
   const [isVoter, setIsVoter]               = useState(false)
   const [workflowStatus, setWorkflowStatus] = useState(0)
+
+  const readVoterInput = useRef('')
 
   useEffect(() => {
     (async function() {
@@ -49,10 +51,16 @@ const Voters = (props) => {
           setIsOwner(false)
         }
         //Set isVoter
-        let voter = await contract.methods.getVoter(connectedAccount).call()
-        let isVoterBool = (voter.isRegistered) ? true : false
-        setIsVoter(isVoterBool)
-        console.log('isVoterBool : ' + isVoterBool)
+        try {
+          let voter = await contract.methods.getVoter(connectedAccount).call()
+          let isVoterBool = (voter.isRegistered) ? true : false
+          setIsVoter(isVoterBool)
+          console.log('isVoterBool : ' + isVoterBool)
+        }
+        catch(err) {
+          setIsVoter(false)
+        } 
+        
       }  
     })()
   }, [accounts])
@@ -70,17 +78,22 @@ const Voters = (props) => {
   
   const addNewVoter = async (newVoter) => {
     if (newVoter !== "") {
+        /*
         setVoters([...voters, {
             id: uuidv4(),
             address:newVoter
             }
         ])
-        console.log(voters)
+        */
         console.log('Send transaction to metamask to add new voter')
-        // await contract.methods.addVoter(newVoter).send({from: connectedAccount})
-        // let voters = await contract.methods.getVoter(newVoter).call()
+        await contract.methods.addVoter(newVoter).send({from: connectedAccount})
+        let voters = await contract.methods.getVoter(newVoter).call()
+        console.log(voters)
         setWarning(warning ? !warning : warning);
         setAddVoter('')
+        if (connectedAccount.toLowerCase() === newVoter) {
+          setIsVoter(true)
+        }
 
     }  
     else {
@@ -115,20 +128,37 @@ const Voters = (props) => {
       <br/>
       <br/>
       <br/>
-      {myVotersList}  
     </form>
     : <div className="card"><div className="card-body text-danger bg-dark">You cannot add voters in the white list as you're not the owner.</div></div>
+
+  let displayVoterInfos = ''
+  const handleReadVoter = async (event) => {
+    event.preventDefault()
+    console.log('readVoterInput')
+    console.log(readVoterInput.current.value)
+    let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
+    console.log(voter)
+    //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
+    alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
+  } 
+
 
   const displayReadVoterForm = (isVoter) ?
     <form>
     <h2>Read Voter (only voters)</h2>
     <div className="mb-3 form-group">
       <label for="getVoterAddressInput" className="form-label">Voter address</label>
-      <input type="text" className="form-control" id="voterAddressInput" aria-describedby="getVoterAddressHelp"/>
+      <input type="text" className="form-control" id="voterAddressInput" ref={readVoterInput} aria-describedby="getVoterAddressHelp"/>
       <div id="getVoterAddressHelp" className="form-text">Read infos about a voter address by giving an existing ETH voter address</div>
     </div>
-    <button type="submit" className="btn btn-primary">Read Voter</button>
+    <button onClick={handleReadVoter} className="btn btn-primary">Read Voter</button>
+    <br/>
+    <br/>
+    {displayVoterInfos}
     </form> 
+    
+    
+
     : <div className="card"><div className="card-body text-danger bg-dark">You cannot get infos of voters as you're not registered in the white list.</div></div>
 
   //console.log(myVoters.length)
