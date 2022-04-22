@@ -83,13 +83,6 @@ const Voters = (props) => {
   
   const addNewVoter = async (newVoter) => {
     if (newVoter !== "") {
-        /*
-        setVoters([...voters, {
-            id: uuidv4(),
-            address:newVoter
-            }
-        ])
-        */
         console.log('Send transaction to metamask to add new voter')
         await contract.methods.addVoter(newVoter).send({from: connectedAccount})
         let voters = await contract.methods.getVoter(newVoter).call()
@@ -155,15 +148,20 @@ const Voters = (props) => {
     event.preventDefault()
     console.log('readVoterInput')
     console.log(readVoterInput.current.value)
-    let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
-    console.log(voter)
-    //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
-    //alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
-    displayVoterInfos = "IS VOTER REGISTERED : " + voter.isRegistered +" ----  HAS VOTER VOTED : " + voter.hasVoted +  "----  PROPOSAL ID VOTED : " + voter.votedProposalId
-
-    setDisplayVoterInformations(displayVoterInfos)
-    
+    try {
+      let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
+      console.log(voter)
+      //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
+      //alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
+      displayVoterInfos = "IS VOTER REGISTERED : " + voter.isRegistered +" ----  HAS VOTED : " + voter.hasVoted +  "----  PROPOSAL ID VOTED : " + voter.votedProposalId
+      setDisplayVoterInformations(displayVoterInfos)
+    }
+    catch(err) {
+      displayVoterInfos = "Bad ETH Address !"
+      setDisplayVoterInformations(displayVoterInfos)
+    }  
   }  
+
   const displayReadVoterForm = (isVoter) ?
     <form>
     <h2>Read Voter (only voters)</h2>

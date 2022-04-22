@@ -68,7 +68,9 @@ function Proposals(props) {
   }, [accounts])
 
 
-  const myProposals = proposals.map(proposal => {
+  const myProposals = (proposals.length == 1 && proposals[0].id == '')
+    ?<div className="alert alert-danger mt-4" role="alert"> No proposals yet </div>
+    : proposals.map(proposal => {
     return (
         <li className="list-group-item" key={proposal.id}>ID : {proposal.id}  | NAME : {proposal.name}</li>
     )
@@ -109,19 +111,31 @@ function Proposals(props) {
     return (proposals.length -1)
   }
 
+  const isPRoposalsArrayEmpty = () => {
+    return (proposals.length == 1 && proposals[0].id == '')
+  }
+
   const addNewProposal = async (newProposal) => {
     if (newProposal !== "") {
         
         console.log('Send transaction to metamask to add new proposal')
         await contract.methods.addProposal(newProposal).send({from: connectedAccount})
         
-        let maxIdProposal = await getMaxIdProposal()
-        setProposals([...proposals, {
-          id: maxIdProposal+1,
-          name:newProposal
-          }
-        ])
-        
+        if (isPRoposalsArrayEmpty()) {
+          setProposals([{
+            id: 0,
+            name:newProposal
+            }
+          ])
+        }
+        else {
+          let maxIdProposal = await getMaxIdProposal()
+          setProposals([...proposals, {
+            id: maxIdProposal+1,
+            name:newProposal
+            }
+          ])
+        }
         console.log("proposal")
         //console.log(proposal)
         setWarning(warning ? !warning : warning);
@@ -146,7 +160,7 @@ function Proposals(props) {
 
   const workflowStatusNok = (workflowStatus != '1') ? <div className="alert alert-danger mt-4" role="alert">You can't add proposal anymore because workflow status is not "ProposalsRegistrationStarted"</div> : ''
 
-  const displayAddProposalForm = isVoter
+  const displayAddProposalForm = (isVoter && (workflowStatus == '1'))
     ? 
     <form onSubmit={handleSubmitAddProposal}>
       
@@ -184,11 +198,6 @@ function Proposals(props) {
       {displayAddProposalForm}
       <br/>
       <br/>
-      <div className="divider mt-5"><span></span><span>Read Proposal</span><span></span></div>
-      <br/>
-      <br/>
-      {displayReadProposalForm}
-
       <div className="divider mt-5"><span></span><span>List of Proposals</span><span></span></div>
       {myProposals}
       

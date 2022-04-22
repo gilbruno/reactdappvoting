@@ -75,6 +75,13 @@ li.connected-account{
   background-color: #61DAFB
 }
 
+.warningHasVoted {
+  background-color: red
+}
+
+.warningHasVotedLightRed {
+  background-color: #e95f4d
+}
 .section_our_solution .row {
   align-items: center;
 }

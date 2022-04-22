@@ -59,6 +59,17 @@ function Dashboard(props) {
       }  
     })()
   }, [accounts])
+
+    //useEffect on "workflowStatus" state value change
+    useEffect(() => {
+      (async function() {
+        if (contract !== null) {
+          console.log('"workflowStatus" state value change')
+          let workflowstatus = await contract.methods.workflowStatus().call({from : connectedAccount});
+          setWorkflowStatus(workflowstatus)
+        }  
+      })()
+    })
   
   const getWorkflowStatusName = (workflow) => {
     let wfStatusName
@@ -114,23 +125,23 @@ function Dashboard(props) {
     event.preventDefault();
     console.log(workflowStatus)
     
-    if (workflowStatus == 0) {
+    if (workflowStatus == '0') {
       await contract.methods.startProposalsRegistering().send({from: connectedAccount})
     }
-    else if (workflowStatus == 1) {
+    else if (workflowStatus == '1') {
       await contract.methods.endProposalsRegistering().send({from: connectedAccount})
     }
-    else if (workflowStatus == 2) {
+    else if (workflowStatus == '2') {
       await contract.methods.startVotingSession().send({from: connectedAccount})
     }
-    else if (workflowStatus == 3) {
+    else if (workflowStatus == '3') {
       await contract.methods.endVotingSession().send({from: connectedAccount})
     }
-    else if (workflowStatus == 4) {
+    else if (workflowStatus == '4') {
       await contract.methods.tallyVotes().send({from: connectedAccount})
     }  
-    let newWorkflowStatus = parseInt(workflowStatus)+1
-    setWorkflowStatus(newWorkflowStatus)
+    // let newWorkflowStatus = parseInt(workflowStatus)+1
+    // setWorkflowStatus(newWorkflowStatus)
   }
 
 
@@ -140,28 +151,32 @@ function Dashboard(props) {
   
   console.log(isOwner)
 
+  const inputWorkflowStatus = (isOwner) && <input type="text" className="form-control w-25" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/>
   const buttonModifyStatus = (isOwner) 
     ? <button type="" className="btn btn-primary" onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
     : ''
 
-  const displayResult = (workflowStatusName != 'VotesTallied')?<div className="alert alert-danger mt-4 w-50" role="alert">Results are not known yet</div>:''
+  const displayResult = (workflowStatusName != 'VotesTallied')?<div className="alert alert-danger mt-4 w-50" role="alert">Results are not known yet</div>
+    :<div className="mt-5"><label for="winnerIdInput" className="form-label">Winner ID :</label><input type="text" className="form-control w-25" id="winnerId" aria-describedby="winnerIdHelp" disabled/></div>
 
   const getPastEventsProposalsHistory = async () => {
-    let options = {
-      fromBlock:0,
-      toBlock: 'latest'
+    if (connectedAccount != '') {
+      let options = {
+        fromBlock:0,
+        toBlock: 'latest'
+      }
+      let proposals = []
+      let proposalsEvents = await contract.getPastEvents('ProposalRegistered', options);
+      //console.log('proposalsEvents')
+      //console.log(proposalsEvents)
+      for (let i = 0; i < proposalsEvents.length; i++) {
+        let idProposal = proposalsEvents[i].returnValues.proposalId
+        let proposal = await contract.methods.getOneProposal(idProposal).call({from: connectedAccount})
+        proposals.push({id : idProposal, name: proposal.description})
+      }
+      
+      console.log(proposals)
     }
-    let proposals = []
-    let proposalsEvents = await contract.getPastEvents('ProposalRegistered', options);
-    //console.log('proposalsEvents')
-    //console.log(proposalsEvents)
-    for (let i = 0; i < proposalsEvents.length; i++) {
-      let idProposal = proposalsEvents[i].returnValues.proposalId
-      let proposal = await contract.methods.getOneProposal(idProposal).call({from: connectedAccount})
-      proposals.push({id : idProposal, name: proposal.description})
-    }
-    
-    console.log(proposals)
   }
 
   const test = getPastEventsProposalsHistory();
@@ -177,8 +192,7 @@ function Dashboard(props) {
       <div className="mt-5">
         <form className="">
           <div className="mb-3 form-group mt-4">
-            <input type="text" className="form-control w-25" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/>
-            
+            {inputWorkflowStatus}
           </div>
           {buttonModifyStatus}
           {warningIsNotOwner}
@@ -186,17 +200,9 @@ function Dashboard(props) {
       </div>
       <br/>
       <br/>
-      <div className="divider mt-5"><span></span><span>Events Proposals History</span><span></span></div>
-
-      <br/>
-      <br/>
       <div className="divider mt-5"><span></span><span>Results</span><span></span></div>
       {displayResult}
-      <div className="mt-5">
-      <label for="winnerIdInput" className="form-label">Winner ID :</label>
-      <input type="text" className="form-control w-25" id="winnerId" aria-describedby="winnerIdHelp" disabled/>
-
-      </div>
+      
     </div>
   )
 }

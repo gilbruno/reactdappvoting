@@ -1,6 +1,5 @@
 import React from 'react'
 import {Link} from 'react-router-dom';
-import BootToast from './BootToast';
 import CardIcon from './CardIcon';
 
 function HomeContent() {
@@ -44,7 +43,6 @@ function HomeContent() {
         </div>
       </div>
 
-      <BootToast buttonName="toto" toastMessage="OKIIII"/>
     </div>
   )
 }

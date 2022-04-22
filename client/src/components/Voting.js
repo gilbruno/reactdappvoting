@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { Toast, Button } from 'react-bootstrap'
 
 function Voting(props) {
 
@@ -15,6 +16,9 @@ function Voting(props) {
     const [isOwner, setIsOwner] = useState(true)
     const [isVoter, setIsVoter] = useState(false)
     const [workflowStatus, setWorkflowStatus] = useState(0)
+    const [votingId, setVotingId] = useState(null)
+    const [view, initView] = useState(false)
+    const [displayWarningHasVoted, setDisplayWarningHasVoted] = useState('')
  
     useEffect(() => {
         (async function() {
@@ -85,19 +89,74 @@ function Voting(props) {
       }
     
     let displayVotingForm = ''
+
+    const setVote = async (votindId) => {
+      if (votingId != '') {
+        try {
+          await contract.methods.setVote(votingId).send({from: connectedAccount})
+        }
+        catch (err) {
+          console.log(err.message)
+        }
+        
+        setVotingId('')
+      }
+    }
+
+    const hasVoted = async() => {
+      try {
+        let voter = await contract.methods.getVoter(connectedAccount).call({from:connectedAccount})
+        if (voter.hasVoted) {
+          alert("You can vote only ONCE !")
+        }
+      }
+      catch(err) {
+        console.log(err.message);
+      }
+    }
+
+    const handleSubmitVote = async (event) => {
+      event.preventDefault()  
+      try {
+        let voter = await contract.methods.getVoter(connectedAccount).call({from:connectedAccount})
+        if (voter.hasVoted) {
+          initView(true)
+          setDisplayWarningHasVoted("You can vote only ONCE !")
+          return
+        }
+        else {
+          setVote(votingId)
+        }
+      }
+      catch(err) {
+        console.log(err.message);
+      }
+    }
+  
+    const handleOnChangeSetVote = (event) => {
+      setVotingId(event.target.value)
+    }
+
     let workflowStatusName = getWorkflowStatusName(workflowStatus)
-    console.log('Voting - isVoter : ' + isVoter)
-    console.log('Voting - workflowStatusName : ' + workflowStatusName)
-    //setIsVoter(true)
+
     //workflowStatusName = 'VotingSessionStarted'
     if (isVoter && workflowStatusName == 'VotingSessionStarted') {
-        displayVotingForm = <form>
+        displayVotingForm = 
+        <form>
         <div className="mb-3 form-group">
-          <label for="votingInput" className="form-label">Proposal</label>
-          <input type="text" className="form-control" id="votingInput" aria-describedby="votingInputHelp"/>
-          <div id="votingInputHelp" className="form-text">Read infos about a proposal address by giving an existing ID proposal</div>
+          <label for="votingInput" className="form-label">Proposal ID</label>
+          <input type="text" className="form-control" id="votingInput" aria-describedby="votingInputHelp" value={votingId} onChange={handleOnChangeSetVote}/>
+          <div id="votingInputHelp" className="form-text">Submit an ID proposal to vote. (You can see the list of proposals in the navbar item "Proposals")</div>
         </div>
-        <button type="submit" className="btn btn-primary">Read Proposal</button>
+         <Toast className="mb-2 warningHasVotedLightRed" onClose={() => initView(false)} show={view} delay={5000} autohide>
+            <Toast.Header className="warningHasVoted">
+            <strong className="mr-auto"></strong>
+            <small></small>
+            </Toast.Header>
+            <Toast.Body className="warningHasVoted">{displayWarningHasVoted}</Toast.Body>
+        </Toast>
+        <Button onClick={handleSubmitVote}>Vote</Button>
+
       </form>
     }
     else if (!isVoter) {
