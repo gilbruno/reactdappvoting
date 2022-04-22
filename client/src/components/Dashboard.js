@@ -116,6 +116,9 @@ function Dashboard(props) {
       case '4':
         wfStatusButtonName = 'Tally Votes'
         break   
+      case '5':
+        wfStatusButtonName = 'VOTING IS ENDED'
+        break   
     }  
 
     return wfStatusButtonName
@@ -153,7 +156,9 @@ function Dashboard(props) {
 
   const inputWorkflowStatus = (isOwner) && <input type="text" className="form-control w-25" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/>
   const buttonModifyStatus = (isOwner) 
-    ? <button type="" className="btn btn-primary" onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
+    ? (workflowStatusButtonName=='VOTING IS ENDED') 
+        ? <button type="" className="btn btn-primary" disabled onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
+        : <button type="" className="btn btn-primary" onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
     : ''
 
   const displayResult = (workflowStatusName != 'VotesTallied')?<div className="alert alert-danger mt-4 w-50" role="alert">Results are not known yet</div>
