@@ -96,10 +96,13 @@ function Voting(props) {
           await contract.methods.setVote(votingId).send({from: connectedAccount})
         }
         catch (err) {
-          console.log(err.message)
+          if (err.message.includes('Proposal not found')) {
+            initView(true)
+            setDisplayWarningHasVoted("Proposal does not exist")
+            setVotingId('')
+            return
+          }
         }
-        
-        setVotingId('')
       }
     }
 
@@ -126,6 +129,7 @@ function Voting(props) {
         }
         else {
           setVote(votingId)
+          setVotingId('')
         }
       }
       catch(err) {

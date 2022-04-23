@@ -6,14 +6,15 @@ function Dashboard(props) {
   const web3 = stateProps.web3
   const contract = stateProps.contract
   const accounts = stateProps.accounts
-  console.log('Page du dashboard')
 
   const [workflowStatus, setWorkflowStatus] = useState(0)
   const [isOwner, setIsOwner]               = useState(false)
   const [isVoter, setIsVoter]               = useState(false)
+  const [winningProposalId, setWinningProposalID] = useState(null)
 
   useEffect(() => {
     (async function() {
+      console.log('useEffect contract')
       if (contract !== null) {
         let workflowstatus = await contract.methods.workflowStatus().call();
         let owner          = await contract.methods.owner().call();
@@ -33,7 +34,7 @@ function Dashboard(props) {
   //useEffect on "accounts" state value change
   useEffect(() => {
     (async function() {
-      console.log('2')
+      console.log('useEffect accounts')
       if (contract !== null) {
         let owner          = await contract.methods.owner().call();
         //Set isOwner
@@ -48,14 +49,12 @@ function Dashboard(props) {
           let voter = await contract.methods.getVoter(connectedAccount).call()
           let isVoterBool = (voter.isRegistered) ? true : false
           setIsVoter(isVoterBool)
-          console.log('isVoterBool : ' + isVoterBool)  
         }
         catch (err) {
           if (err.message.includes('not a voter')) {
             setIsVoter(false)
           }
         }
-        
       }  
     })()
   }, [accounts])
@@ -63,13 +62,13 @@ function Dashboard(props) {
     //useEffect on "workflowStatus" state value change
     useEffect(() => {
       (async function() {
+        console.log('useEffect workflowStatus')
         if (contract !== null) {
-          console.log('"workflowStatus" state value change')
           let workflowstatus = await contract.methods.workflowStatus().call({from : connectedAccount});
           setWorkflowStatus(workflowstatus)
         }  
       })()
-    })
+    }, [workflowStatus])
   
   const getWorkflowStatusName = (workflow) => {
     let wfStatusName
@@ -98,7 +97,6 @@ function Dashboard(props) {
   }
 
   const getWorkflowStatusButtonName = (workflow) => {
-    console.log('workflow = ' + workflow)
     let wfStatusButtonName
     switch (workflow) {
       case '0':
@@ -143,8 +141,8 @@ function Dashboard(props) {
     else if (workflowStatus == '4') {
       await contract.methods.tallyVotes().send({from: connectedAccount})
     }  
-    // let newWorkflowStatus = parseInt(workflowStatus)+1
-    // setWorkflowStatus(newWorkflowStatus)
+    let newWorkflowStatus = parseInt(workflowStatus)+1
+    setWorkflowStatus(newWorkflowStatus)
   }
 
 
@@ -152,9 +150,7 @@ function Dashboard(props) {
   const workflowStatusButtonName = getWorkflowStatusButtonName(workflowStatus)
   const warningIsNotOwner = !isOwner && <div className="alert alert-danger mt-4 w-50" role="alert">You can't modify the workflow Status because you are not the owner</div>
   
-  console.log(isOwner)
-
-  const inputWorkflowStatus = (isOwner) && <input type="text" className="form-control w-25" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/>
+  const inputWorkflowStatus = (isOwner) && <input type="text" className="form-control w-50" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/>
   const buttonModifyStatus = (isOwner) 
     ? (workflowStatusButtonName=='VOTING IS ENDED') 
         ? <button type="" className="btn btn-primary" disabled onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
@@ -164,32 +160,22 @@ function Dashboard(props) {
   const displayResult = (workflowStatusName != 'VotesTallied')?<div className="alert alert-danger mt-4 w-50" role="alert">Results are not known yet</div>
     :<div className="mt-5"><label for="winnerIdInput" className="form-label">Winner ID :</label><input type="text" className="form-control w-25" id="winnerId" aria-describedby="winnerIdHelp" disabled/></div>
 
-  const getPastEventsProposalsHistory = async () => {
+  const getPastEventsWorkflowStatusChange = async () => {
     if (connectedAccount != '') {
       let options = {
         fromBlock:0,
         toBlock: 'latest'
       }
       let proposals = []
-      let proposalsEvents = await contract.getPastEvents('ProposalRegistered', options);
-      //console.log('proposalsEvents')
-      //console.log(proposalsEvents)
+      let proposalsEvents = await contract.getPastEvents('WorkflowStatusChange', options);
       for (let i = 0; i < proposalsEvents.length; i++) {
         let idProposal = proposalsEvents[i].returnValues.proposalId
         let proposal = await contract.methods.getOneProposal(idProposal).call({from: connectedAccount})
         proposals.push({id : idProposal, name: proposal.description})
       }
       
-      console.log(proposals)
     }
   }
-
-  const test = getPastEventsProposalsHistory();
-  const displayEventsPrposalsHistory = <ul>
-    <li>
-
-    </li>
-  </ul>
 
   return (
     <div className="container">

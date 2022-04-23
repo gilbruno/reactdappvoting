@@ -115,7 +115,7 @@ const Voters = (props) => {
 
   const myVotersList = (myVoters.length != 0) ? <ul className="list-group">{myVoters}</ul>: ''
 
-  const displayAddVoterForm = (isOwner)? 
+  const displayAddVoterForm = (isOwner && connectedAccount != '')? 
     <form onSubmit={handleSubmitAddVoter}>
       <div className="mb-3 form-group">
         <label for="addVoterAddressInput" className="form-label">Voter address</label>
@@ -130,18 +130,6 @@ const Voters = (props) => {
     : <div className="card"><div className="card-body text-danger bg-dark">You cannot add voters in the white list as you're not the owner.</div></div>
 
   let displayVoterInfos = ''
-  const handleReadVoter = async (event) => {
-    event.preventDefault()
-    console.log('readVoterInput')
-    console.log(readVoterInput.current.value)
-    let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
-    console.log(voter)
-    //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
-    alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
-    displayVoterInfos = "IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId
-    setDisplayVoterInformations(displayVoterInfos)
-    
-  } 
 
   const handleClick = async (event) => {
     initView(true)
@@ -151,9 +139,8 @@ const Voters = (props) => {
     try {
       let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
       console.log(voter)
-      //displayVoterInfos = <div>isRegistered : {voter.const displayVoterInfos}</div>
-      //alert("IS VOTER REGISTERED : " + voter.isRegistered +"\r\n HAS VOTER VOTED : " + voter.hasVoted +  "\r\n PROPOSAL ID VOTED : " + voter.votedProposalId)
-      displayVoterInfos = "IS VOTER REGISTERED : " + voter.isRegistered +" ----  HAS VOTED : " + voter.hasVoted +  "----  PROPOSAL ID VOTED : " + voter.votedProposalId
+      //displayVoterInfos = <div><ul><li>IS VOTER REGISTERED : {voter} </li><li>HAS VOTER VOTED : {voter.hasVoted} </li><li> PROPOSAL ID VOTED : {voter.votedProposalId}</li></ul></div>
+      displayVoterInfos = "IS REGISTERED : " + voter.isRegistered +" -- HAS VOTED : " + voter.hasVoted +  " - PROPOSAL ID VOTED : " + voter.votedProposalId
       setDisplayVoterInformations(displayVoterInfos)
     }
     catch(err) {
@@ -171,14 +158,13 @@ const Voters = (props) => {
       <div id="getVoterAddressHelp" className="form-text">Read infos about a voter address by giving an existing ETH voter address</div>
     </div>
     
-    <Toast onClose={() => initView(false)} show={view} delay={5000} autohide>
+    <Toast className="w-50" onClose={() => initView(false)} show={view} delay={10000} autohide>
         <Toast.Header>
         <strong className="mr-auto"></strong>
-        <small></small>
         </Toast.Header>
         <Toast.Body>{displayVoterInformations}</Toast.Body>
     </Toast>
-    <Button onClick={handleClick}>Read Voter</Button>
+    <Button className="mt-4" onClick={handleClick}>Read Voter</Button>
     
     <br/>
     <br/>
