@@ -71,9 +71,14 @@ li.connected-account{
   font-family: "Century Gothic";
 }
 
-.toast-body {
+div.blue {
   background-color: #61DAFB
 }
+
+div.red {
+  background-color: red!important;
+}
+
 
 .warningHasVoted {
   background-color: red

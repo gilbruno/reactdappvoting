@@ -157,7 +157,7 @@ function Dashboard(props) {
   const workflowStatusButtonName = getWorkflowStatusButtonName(workflowStatus)
   const warningIsNotOwner = !isOwner && <div className="alert alert-danger mt-4 w-50" role="alert">You can't modify the workflow Status because you are not the owner</div>
   
-  const inputWorkflowStatus = (isOwner) && <input type="text" className="form-control w-50" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/>
+  const inputWorkflowStatus = (isOwner) && <div><label>Current workflow status :</label><input type="text" className="form-control w-50" id="workflowStatus" aria-describedby="workflowStatusHelp" value={workflowStatusName} disabled/></div>
   const buttonModifyStatus = (isOwner) 
     ? (workflowStatusButtonName=='VOTING IS ENDED') 
         ? <button type="" className="btn btn-primary" disabled onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
@@ -194,7 +194,7 @@ function Dashboard(props) {
 
   return (
     <div className="container">
-      <div className="divider mt-5"><span></span><span>Current Workflow Status</span><span></span></div>
+      <div className="divider mt-5"><span></span><span>Workflow Status</span><span></span></div>
       <div className="mt-5">
         <form className="">
           <div className="mb-3 form-group mt-4">

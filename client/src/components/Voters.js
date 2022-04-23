@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import getWeb3 from "../getWeb3";
-import { Toast, Button } from 'react-bootstrap'
+import { Toast, Button, ToastContainer } from 'react-bootstrap'
 
 
 const Voters = (props) => {
@@ -19,6 +19,7 @@ const Voters = (props) => {
   const [workflowStatus, setWorkflowStatus] = useState(0)
   const [displayVoterInformations, setDisplayVoterInformations] = useState('')
   const [view, initView] = useState(false)
+  const [toastColor, setToastColor] = useState('')
 
 
   const readVoterInput = useRef('')
@@ -41,6 +42,13 @@ const Voters = (props) => {
       }
     })()
   }, [contract])
+
+  useEffect(() => {
+    (async function() {
+      console.log('useeffect isVoter')
+      
+    })()
+  }, [isVoter])
 
   //useEffect on "accounts" state value change
   useEffect(() => {
@@ -131,25 +139,45 @@ const Voters = (props) => {
 
   let displayVoterInfos = ''
 
-  const handleClick = async (event) => {
+  const handleClickReadVoter = async (event) => {
     initView(true)
     event.preventDefault()
     console.log('readVoterInput')
     console.log(readVoterInput.current.value)
+    //Check if the current account is a voter registered in the whitelist
+    try {
+      let currentVoter = await contract.methods.getVoter(connectedAccount).call({from:connectedAccount})
+    }
+    catch (err) {
+      if (err.message.includes("not a voter")) {
+        displayVoterInfos = "You cannot read infos of the voter as you are not registered"
+        setDisplayVoterInformations(displayVoterInfos)
+        setToastColor('red')
+        readVoterInput.current.value = ''
+        return
+      }
+      else {
+        console.log(err.message)
+      }
+    }
+    
     try {
       let voter = await contract.methods.getVoter(readVoterInput.current.value).call({from:connectedAccount})
-      console.log(voter)
-      //displayVoterInfos = <div><ul><li>IS VOTER REGISTERED : {voter} </li><li>HAS VOTER VOTED : {voter.hasVoted} </li><li> PROPOSAL ID VOTED : {voter.votedProposalId}</li></ul></div>
       displayVoterInfos = "IS REGISTERED : " + voter.isRegistered +" -- HAS VOTED : " + voter.hasVoted +  " - PROPOSAL ID VOTED : " + voter.votedProposalId
+      setToastColor('blue')
       setDisplayVoterInformations(displayVoterInfos)
+      readVoterInput.current.value = ''
     }
     catch(err) {
       displayVoterInfos = "Bad ETH Address !"
       setDisplayVoterInformations(displayVoterInfos)
-    }  
+      readVoterInput.current.value = ''
+    }
+    
+      
   }  
 
-  const displayReadVoterForm = (isVoter) ?
+  const displayReadVoterForm = 
     <form>
     <h2>Read Voter (only voters)</h2>
     <div className="mb-3 form-group">
@@ -157,26 +185,19 @@ const Voters = (props) => {
       <input type="text" className="form-control" id="voterAddressInput" ref={readVoterInput} aria-describedby="getVoterAddressHelp"/>
       <div id="getVoterAddressHelp" className="form-text">Read infos about a voter address by giving an existing ETH voter address</div>
     </div>
-    
-    <Toast className="w-50" onClose={() => initView(false)} show={view} delay={10000} autohide>
+    <ToastContainer position="top-center">
+    <Toast onClose={() => initView(false)} show={view} delay={7000} autohide>
         <Toast.Header>
         <strong className="mr-auto"></strong>
         </Toast.Header>
-        <Toast.Body>{displayVoterInformations}</Toast.Body>
+        <Toast.Body className={toastColor}>{displayVoterInformations}</Toast.Body>
     </Toast>
-    <Button className="mt-4" onClick={handleClick}>Read Voter</Button>
-    
+    </ToastContainer>
+    <Button className="mt-4" onClick={handleClickReadVoter}>Read Voter</Button>
     <br/>
     <br/>
-    
     </form> 
     
-    
-
-    : <div className="card"><div className="card-body alert-danger">You cannot get infos of voters as you're not registered in the white list.</div></div>
-
-  //console.log(myVoters.length)
-  //console.log(connectedAccount)
   return (
     <div className="container">
       <div className="divider mt-5"><span></span><span>Add Voters (only admin)</span><span></span></div>
