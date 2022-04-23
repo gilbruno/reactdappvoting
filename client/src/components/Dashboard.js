@@ -11,6 +11,8 @@ function Dashboard(props) {
   const [isOwner, setIsOwner]               = useState(false)
   const [isVoter, setIsVoter]               = useState(false)
   const [winningProposalId, setWinningProposalID] = useState(null)
+  const [winningProposalName, setWinningProposalName] = useState(null)
+  const [winningProposalVoteCount, setWinningProposalVoteCount] = useState(null)
 
   useEffect(() => {
     (async function() {
@@ -66,6 +68,11 @@ function Dashboard(props) {
         if (contract !== null) {
           let workflowstatus = await contract.methods.workflowStatus().call({from : connectedAccount});
           setWorkflowStatus(workflowstatus)
+          let winningProposalId = await contract.methods.winningProposalID().call({from : connectedAccount});
+          setWinningProposalID(winningProposalId)
+          let winningProp = await contract.methods.getOneProposal(winningProposalId).call({from: connectedAccount})
+          setWinningProposalName(winningProp.description)
+          setWinningProposalVoteCount(winningProp.voteCount)
         }  
       })()
     }, [workflowStatus])
@@ -157,8 +164,16 @@ function Dashboard(props) {
         : <button type="" className="btn btn-primary" onClick={changeWorkflowStatus}>{workflowStatusButtonName}</button>
     : ''
 
+
   const displayResult = (workflowStatusName != 'VotesTallied')?<div className="alert alert-danger mt-4 w-50" role="alert">Results are not known yet</div>
-    :<div className="mt-5"><label for="winnerIdInput" className="form-label">Winner ID :</label><input type="text" className="form-control w-25" id="winnerId" aria-describedby="winnerIdHelp" disabled/></div>
+    :<div className="mt-5">
+      <label for="winnerIdInput" className="form-label">Winner ID : </label>
+      <input type="text" className="form-control w-25" id="winnerId" aria-describedby="winnerIdHelp" disabled value={winningProposalId}/>
+      <label for="winnerNameInput" className="form-label">Proposal Name : </label>
+      <input type="text" className="form-control w-25" id="winnerName" aria-describedby="winnerNameHelp" disabled value={winningProposalName}/>
+      <label for="winnerVoteCountInput" className="form-label">Vote Count : </label>
+      <input type="text" className="form-control w-25" id="winnerVoteCount" aria-describedby="winnerVoteCountHelp" disabled value={winningProposalVoteCount}/>
+    </div>
 
   const getPastEventsWorkflowStatusChange = async () => {
     if (connectedAccount != '') {
