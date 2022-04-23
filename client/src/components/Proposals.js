@@ -174,7 +174,7 @@ function Proposals(props) {
       <br/>
       <br/>        
     </form>
-    : <div className="card"><div className="card-body text-danger bg-dark">You cannot add proposals as you're not a voter (registered in the white list).</div></div>
+    : <div className="card"><div className="card-body alert-danger">You cannot add proposals as you're not a voter (registered in the white list).</div></div>
 
     const displayReadProposalForm = isVoter
     ? <form>

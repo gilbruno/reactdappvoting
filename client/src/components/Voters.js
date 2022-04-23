@@ -127,7 +127,7 @@ const Voters = (props) => {
       <br/>
       <br/>
     </form>
-    : <div className="card"><div className="card-body text-danger bg-dark">You cannot add voters in the white list as you're not the owner.</div></div>
+    : <div className="card"><div className="card-body alert-danger">You cannot add voters in the white list as you're not the owner.</div></div>
 
   let displayVoterInfos = ''
 
@@ -173,7 +173,7 @@ const Voters = (props) => {
     
     
 
-    : <div className="card"><div className="card-body text-danger bg-dark">You cannot get infos of voters as you're not registered in the white list.</div></div>
+    : <div className="card"><div className="card-body alert-danger">You cannot get infos of voters as you're not registered in the white list.</div></div>
 
   //console.log(myVoters.length)
   //console.log(connectedAccount)

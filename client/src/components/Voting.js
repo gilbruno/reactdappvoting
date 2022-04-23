@@ -164,10 +164,10 @@ function Voting(props) {
       </form>
     }
     else if (!isVoter) {
-        displayVotingForm = <div className="card"><div className="card-body text-danger bg-dark">You cannot submit your vote as you're not registered in the white list.</div></div>
+        displayVotingForm = <div className="card"><div className="card-body alert-danger">You cannot submit your vote as you're not registered in the white list.</div></div>
     }
     else if (workflowStatusName != 'VotingSessionStarted') {
-        displayVotingForm = <div className="card"><div className="card-body text-danger bg-dark">You cannot submit your vote as you're not granted to vote due to bad workflow status.</div></div>
+        displayVotingForm = <div className="card"><div className="card-body alert-danger">You cannot submit your vote as you're not granted to vote due to bad workflow status.</div></div>
     }
     
 
