@@ -13,6 +13,7 @@ module.exports = {
    ropsten:{
     provider : function() {return new HDWalletProvider({mnemonic:{phrase:`${process.env.MNEMONIC}`},providerOrUrl:`https://ropsten.infura.io/v3/${process.env.INFURA_ID}`})},
     network_id:3,
+    from: "0x13bc18faec7f39fb5ee428545dbba611267aeaa4",
   },
   kovan:{
     provider : function() {return new HDWalletProvider({mnemonic:{phrase:`${process.env.MNEMONIC}`},providerOrUrl:`https://kovan.infura.io/v3/${process.env.INFURA_ID}`})},
