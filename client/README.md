@@ -66,3 +66,24 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+## LINK OF THE DAPP DEMO
+
+https://www.loom.com/share/794eca4192c4467fb8eb425acc9411a8
+
+## INFOS OF DEPLOYMNET ON TESTNET "ROPSTEN"
+
+   Deploying 'Voting'
+   ------------------
+   > transaction hash:    0x563c1946328b4d3c84bfdbd3c397ae8a1023e22eb4b8e33351268fbf121f3629
+   > Blocks: 1            Seconds: 41
+   > contract address:    0xc09ffA566D26D98566B8e44089b7B909e814E321
+   > block number:        12214970
+   > block timestamp:     1650796688
+   > account:             0x594DB4be0477A6835AA2608119eA5Dd6F45F1C94
+   > balance:             1.151661249305363442
+   > gas used:            2184185 (0x2153f9)
+   > gas price:           17.914486197 gwei
+   > value sent:          0 ETH
+   > total cost:          0.039128552034194445 ETH
