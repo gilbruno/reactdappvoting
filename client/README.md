@@ -87,3 +87,7 @@ https://www.loom.com/share/794eca4192c4467fb8eb425acc9411a8
    > gas price:           17.914486197 gwei
    > value sent:          0 ETH
    > total cost:          0.039128552034194445 ETH
+
+## URL OF THE DEPLOYED DAPP
+
+https://gilbruno.github.io/
