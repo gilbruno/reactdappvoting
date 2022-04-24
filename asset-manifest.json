@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/gilbruno/reactdappvoting/static/css/main.d1ddb906.chunk.css",
-    "main.js": "/gilbruno/reactdappvoting/static/js/main.9f27b1a5.chunk.js",
-    "main.js.map": "/gilbruno/reactdappvoting/static/js/main.9f27b1a5.chunk.js.map",
-    "runtime-main.js": "/gilbruno/reactdappvoting/static/js/runtime-main.dd750d14.js",
-    "runtime-main.js.map": "/gilbruno/reactdappvoting/static/js/runtime-main.dd750d14.js.map",
-    "static/css/2.b6834657.chunk.css": "/gilbruno/reactdappvoting/static/css/2.b6834657.chunk.css",
-    "static/js/2.e89519ab.chunk.js": "/gilbruno/reactdappvoting/static/js/2.e89519ab.chunk.js",
-    "static/js/2.e89519ab.chunk.js.map": "/gilbruno/reactdappvoting/static/js/2.e89519ab.chunk.js.map",
-    "index.html": "/gilbruno/reactdappvoting/index.html",
-    "precache-manifest.7771fc6040a490631b2eb606ab49b733.js": "/gilbruno/reactdappvoting/precache-manifest.7771fc6040a490631b2eb606ab49b733.js",
-    "service-worker.js": "/gilbruno/reactdappvoting/service-worker.js",
-    "static/css/2.b6834657.chunk.css.map": "/gilbruno/reactdappvoting/static/css/2.b6834657.chunk.css.map",
-    "static/css/main.d1ddb906.chunk.css.map": "/gilbruno/reactdappvoting/static/css/main.d1ddb906.chunk.css.map"
+    "main.css": "/reactdappvoting/static/css/main.d1ddb906.chunk.css",
+    "main.js": "/reactdappvoting/static/js/main.1cbb2bd8.chunk.js",
+    "main.js.map": "/reactdappvoting/static/js/main.1cbb2bd8.chunk.js.map",
+    "runtime-main.js": "/reactdappvoting/static/js/runtime-main.c7e6aadd.js",
+    "runtime-main.js.map": "/reactdappvoting/static/js/runtime-main.c7e6aadd.js.map",
+    "static/css/2.b6834657.chunk.css": "/reactdappvoting/static/css/2.b6834657.chunk.css",
+    "static/js/2.b96886c9.chunk.js": "/reactdappvoting/static/js/2.b96886c9.chunk.js",
+    "static/js/2.b96886c9.chunk.js.map": "/reactdappvoting/static/js/2.b96886c9.chunk.js.map",
+    "index.html": "/reactdappvoting/index.html",
+    "precache-manifest.99f2afd1bd19c62e57a43a5d9160f17f.js": "/reactdappvoting/precache-manifest.99f2afd1bd19c62e57a43a5d9160f17f.js",
+    "service-worker.js": "/reactdappvoting/service-worker.js",
+    "static/css/2.b6834657.chunk.css.map": "/reactdappvoting/static/css/2.b6834657.chunk.css.map",
+    "static/css/main.d1ddb906.chunk.css.map": "/reactdappvoting/static/css/main.d1ddb906.chunk.css.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.dd750d14.js",
+    "static/js/runtime-main.c7e6aadd.js",
     "static/css/2.b6834657.chunk.css",
-    "static/js/2.e89519ab.chunk.js",
+    "static/js/2.b96886c9.chunk.js",
     "static/css/main.d1ddb906.chunk.css",
-    "static/js/main.9f27b1a5.chunk.js"
+    "static/js/main.1cbb2bd8.chunk.js"
   ]
 }
