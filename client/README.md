@@ -90,4 +90,4 @@ https://www.loom.com/share/794eca4192c4467fb8eb425acc9411a8
 
 ## URL OF THE DEPLOYED DAPP
 
-https://gilbruno.github.io/
+https://gilbruno.github.io/reactdappvoting/
